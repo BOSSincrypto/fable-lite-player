@@ -40,14 +40,14 @@ jobs:
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "Version: $VERSION_NAME ($VERSION_CODE)"
 
-      - name: Build release APK
-        run: ./gradlew assembleRelease --stacktrace
+      - name: Build debug APK (self-signed)
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Rename APK
         run: |
           mkdir -p app/build/outputs/apk/release
+          cp app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/fable-lite-player-v${{ steps.get_version.outputs.version_name }}.apk
           ls -la app/build/outputs/apk/release/
-          mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/fable-lite-player-v${{ steps.get_version.outputs.version_name }}.apk
 
       - name: Check if tag exists
         id: check_tag
