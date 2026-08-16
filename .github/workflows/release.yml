@@ -35,8 +35,8 @@ jobs:
       - name: Extract version from gradle
         id: get_version
         run: |
-          VERSION_NAME=$(grep "versionName" app/build.gradle.kts | awk '{print $3}' | tr -d '"')
-          VERSION_CODE=$(grep "versionCode" app/build.gradle.kts | awk '{print $3}')
+          VERSION_NAME=$(grep "versionName =" app/build.gradle.kts | sed 's/.*"\(.*\)".*/\1/')
+          VERSION_CODE=$(grep "versionCode =" app/build.gradle.kts | sed 's/.*= \(.*\)/\1/')
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
           echo "Version: $VERSION_NAME ($VERSION_CODE)"
@@ -47,7 +47,8 @@ jobs:
       - name: Rename APK
         run: |
           mkdir -p app/build/outputs/apk/release
-          cp app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/fable-lite-player-v${{ steps.get_version.outputs.version_name }}.apk || true
+          ls -la app/build/outputs/apk/release/
+          mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/fable-lite-player-v${{ steps.get_version.outputs.version_name }}.apk
 
       - name: Check if tag exists
         id: check_tag
